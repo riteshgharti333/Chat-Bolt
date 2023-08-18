@@ -1,8 +1,7 @@
-import React from 'react'
-import Sidebar from '../components/Sidebar'
-import Chat from '../components/Chat'
-import Chats from '../components/Chats'
-
+import React from "react";
+import Sidebar from "../components/Sidebar";
+import Chat from "../components/Chat";
+import Chats from "../components/Chats";
 
 const Home = () => {
   return (
@@ -10,10 +9,9 @@ const Home = () => {
       <div className="container">
         <Sidebar />
         <Chat />
-        {/* <Chats /> */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

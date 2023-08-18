@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
-import {Link, useNavigate} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [err, setErr] = useState(false);
@@ -17,10 +17,14 @@ const Register = () => {
     const file = e.target[3].files[0];
 
     try {
-      const {user} = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
       // const date = new Date().getTime();
-      
+
       // const timestamp = new Date().getTime();
 
       const storageRef = ref(storage, displayName);
@@ -33,28 +37,30 @@ const Register = () => {
           console.log(error);
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateProfile(user, {
-              displayName,
-              photoURL: downloadURL,
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then(async (downloadURL) => {
+              await updateProfile(user, {
+                displayName,
+                photoURL: downloadURL,
+              });
+              await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                displayName,
+                email,
+                photoURL: downloadURL,
+              });
+              await setDoc(doc(db, "userChats", user.uid), {});
+              navigate("/");
+            })
+            .catch((error) => {
+              setErr(true);
+              console.log(error);
             });
-            await setDoc(doc(db, "users", user.uid), {
-              uid: user.uid,
-              displayName,
-              email,
-              photoURL: downloadURL,
-            });
-            await setDoc(doc(db , "userChats" , user.uid) , {});
-          navigate("/")
-          }).catch((error) => {
-            setErr(true);
-            console.log(error)
-          })
         }
       );
     } catch (error) {
       setErr(true);
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -77,10 +83,10 @@ const Register = () => {
           </label>
           <button>Sign Up</button>
           {err && <span>Something went wrong</span>}
-        </form> 
-        <p>You do have an account? <Link to="/login">
-        Login
-        </Link> </p>
+        </form>
+        <p>
+          You do have an account? <Link to="/login">Login</Link>{" "}
+        </p>
       </div>
     </div>
   );
